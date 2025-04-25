@@ -1,0 +1,10 @@
+githubConfigSecret: ${githubConfigSecret}
+githubConfigUrl: ${githubConfigUrl}
+template:
+  spec:
+    nodeSelector:
+      kubernetes.io/os: ${os}
+%{ if containerModeType != "" }
+containerMode:
+  type: ${containerModeType}
+%{ endif }
