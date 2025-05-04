@@ -43,14 +43,14 @@ resource "helm_release" "arc_runners_set" {
   chart     = "oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set"
   version   = var.arc_runners_version
 
-  values = [
+  values = concat([
     templatefile("${path.module}/Files/arc_runner_linux_values.yaml.tmpl", {
       githubConfigSecret = coalesce(lookup(var.github_secret, "gh-app-pre-defined-secret", ""), var.manual_secret_name)
       githubConfigUrl    = var.gh_config_url
       os                 = "linux"
       containerModeType  = var.arc_container_mode
     })
-  ]
+  ],var.arc_runners_values)
 }
 
 resource "helm_release" "arc_runners_windows" {
@@ -62,14 +62,14 @@ resource "helm_release" "arc_runners_windows" {
   chart      = "oci://ghcr.io/actions/actions-runner-controller-charts/gha-runner-scale-set"
   version    = var.arc_runners_version
 
-  values = [
+  values = concat([
     templatefile("${path.module}/Files/arc_runner_windows_values.yaml.tmpl", {
       githubConfigSecret              = coalesce(lookup(var.github_secret, "gh-app-pre-defined-secret", ""), var.manual_secret_name)
       githubConfigUrl                 = var.gh_config_url
       windows_arc_runner_image        = var.windows_arc_runner_image
       windows_arc_runner_image_pull_secret = var.windows_arc_runner_image_pull_secret
     })
-  ]
+  ],var.arc_runners_values_windows)
 }
 
 resource "kubernetes_secret" "docker_registry" {
